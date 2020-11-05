@@ -4,11 +4,21 @@
   "type": "module",
   "description": "Ecommerce website like Amazon",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NguyenTrungThang123456/fashion-shops.git"
+  },
   "scripts": {
     "build": "cd frontend && npm install && npm run build",
     "start": "nodemon --watch backend --exec node --experimental-modules backend/server.js"
   },
-  "keywords": [],
+  "keywords": [
+    "express",
+    "react",
+    "redux",
+    "mongoose",
+    "ecommerce"
+  ],
   "author": "Thang Nguyen",
   "license": "ISC",
   "dependencies": {
