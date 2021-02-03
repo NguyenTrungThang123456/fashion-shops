@@ -30,6 +30,7 @@ import {
   MoreVert as MoreIcon,
   ShoppingCartSharp,
   KeyboardArrowUp as KeyboardArrowUpIcon,
+  Label,
 } from "@material-ui/icons";
 import { signout } from "./actions/userActions";
 import AdminRoute from "./components/AdminRoute";
@@ -96,19 +97,21 @@ function App(props) {
       <MenuItem onClick={handleMenuClose}>
         <Link to="/profile"> Profile</Link>
       </MenuItem>
-      {/* {userInfo?.isAdmin && <MenuItem>Dashboard</MenuItem>} */}
+      {userInfo?.isAdmin && <MenuItem>Dashboard</MenuItem>}
       <MenuItem onClick={handleMenuClose}>
-        <Link to="/orderhistory">Sign Out</Link>
+        <Link to="/orderhistory">Order History</Link>
       </MenuItem>
-      <MenuItem onClick={handleMenuClose}>
-        <Link to="#signout">Order History</Link>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose();
+          signoutHandler();
+        }}
+      >
+        <Link to="#signout">Signout</Link>
       </MenuItem>
     </Menu>
   );
-  // useEffect(() => {
-  //   cartItems.push(1);
-  //   console.log(cartItems.length);
-  // });
+
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
     <Menu
@@ -153,7 +156,6 @@ function App(props) {
     <BrowserRouter>
       <CssBaseline />
       <HideOnScroll {...props}>
-        {/* <div className={classes.grow}> */}
         <AppBar>
           <Toolbar variant="dense">
             <IconButton
@@ -186,7 +188,7 @@ function App(props) {
             </div>
             <div className={classes.grow} />
             <div className={classes.sectionDesktop}>
-              <Link className={classes.brand}>
+              <Link to="/cart" className={classes.brand}>
                 <IconButton aria-label="show 4 new mails" color="inherit">
                   <Badge badgeContent={cartItems.length} color="secondary">
                     <ShoppingCartSharp />
@@ -224,10 +226,9 @@ function App(props) {
               </IconButton>
             </div>
           </Toolbar>
-        </AppBar>
-        {/* {renderMobileMenu}
+          {renderMobileMenu}
           {renderMenu}
-        </div> */}
+        </AppBar>
       </HideOnScroll>
       <Toolbar id="back-to-top-anchor" />
       <Container>
@@ -258,76 +259,14 @@ function App(props) {
           <KeyboardArrowUpIcon />
         </Fab>
       </ScrollTop>
-      {/* <AppBar className={classes.footer}>
-        <Toolbar variant="dense">
-          <Typography>Copyright by Thang Nguyen</Typography>
-        </Toolbar>
-      </AppBar> */}
+      <footer className={classes.footer}>
+        <Container maxWidth="xs">
+          <Typography variant="overline">
+            Copyright &copy; by Thang Nguyen
+          </Typography>
+        </Container>
+      </footer>
     </BrowserRouter>
-    // <BrowserRouter>
-    //   <div className='grid-container'>
-    //     <header className='row'>
-    //       <div>
-    //         <Link className='brand' to='/'>
-    //           fashion
-    //         </Link>
-    //       </div>
-    //       <div>
-    //         <Link to='/cart'>
-    //           Cart
-    //           {cartItems.length > 0 && (
-    //             <span className='badge'>{cartItems.length}</span>
-    //           )}
-    //         </Link>
-    //         {userInfo ? (
-    //           <div className='dropdown'>
-    //             <Link to='#'>
-    //               {userInfo.name} <i className='fa fa-caret-down'></i>{' '}
-    //             </Link>
-    //             <ul className='dropdown-content'>
-    //               <li>
-    //                 <Link to='/profile'>User Profile</Link>
-    //               </li>
-    //               <li>
-    //                 <Link to='/orderhistory'>Order History</Link>
-    //               </li>
-    //               <li>
-    //                 <Link to='#signout' onClick={signoutHandler}>
-    //                   Sign Out
-    //                 </Link>
-    //               </li>
-    //             </ul>
-    //           </div>
-    //         ) : (
-    //           <Link to='/signin'>Sign In</Link>
-    //         )}
-    //         {userInfo && userInfo.isAdmin && (
-    //           <div className='dropdown'>
-    //             <Link to='#admin'>
-    //               Admin <i className='fa fa-caret-down'></i>
-    //             </Link>
-    //             <ul className='dropdown-content'>
-    //               <li>
-    //                 <Link to='/dashboard'>Dashboard</Link>
-    //               </li>
-    //               <li>
-    //                 <Link to='/productlist'>Products</Link>
-    //               </li>
-    //               <li>
-    //                 <Link to='/orderlist'>Orders</Link>
-    //               </li>
-    //               <li>
-    //                 <Link to='/userlist'>Users</Link>
-    //               </li>
-    //             </ul>
-    //           </div>
-    //         )}
-    //       </div>
-    //     </header>
-
-    //     <footer className='row center'>All right reserved</footer>
-    //   </div>
-    // </BrowserRouter>
   );
 }
 
@@ -341,12 +280,7 @@ function HideOnScroll(props) {
   const trigger = useScrollTrigger({ target: window ? window() : undefined });
 
   return (
-    <Slide
-      appear={false}
-      direction="down"
-      in={!trigger}
-      // className={classes.slide}
-    >
+    <Slide appear={false} direction="down" in={!trigger}>
       {children}
     </Slide>
   );
@@ -469,10 +403,16 @@ const useStyles = makeStyles((theme) => ({
     color: "inherit",
     textDecoration: "none",
   },
-  footer: {},
-  slide: {
-    transition: "0.5s",
+  footer: {
+    padding: theme.spacing(2, 1),
+    marginTop: "auto",
+    justifyContent: "center",
+    backgroundColor:
+      theme.palette.type === "light"
+        ? theme.palette.grey[200]
+        : theme.palette.grey[800],
   },
+
   scrollButton: {
     position: "fixed",
     bottom: theme.spacing(2),
