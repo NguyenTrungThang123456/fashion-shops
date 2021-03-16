@@ -66,6 +66,10 @@ export default function ProfileScreen() {
     }
   };
 
+  useEffect(() => {
+    console.log(successUpdate);
+  });
+
   return (
     <Container maxWidth="xs">
       <form className={classes.form} onSubmit={submitHandler}>
@@ -112,7 +116,9 @@ export default function ProfileScreen() {
               type="password"
               onChange={(e) => setConfirmPassword(e.target.value)}
             ></TextField>
-            {loadingUpdate && <LinearProgress variant="determinate" />}
+            {loadingUpdate && (
+              <LinearProgress variant="determinate" value={loadingUpdate} />
+            )}
             <Button
               className={classes.submit}
               color="primary"
