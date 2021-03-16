@@ -49,6 +49,7 @@ import ShippingAddressScreen from "./screens/ShippingAddressScreen";
 import SigninScreen from "./screens/SigninScreen";
 import ProductEditScreen from "./screens/ProductEditScreen";
 import OrderListScreen from "./screens/OrderListScreen";
+import { SnackbarProvider } from "notistack";
 
 function App(props) {
   const cart = useSelector((state) => state.cart);
@@ -154,125 +155,136 @@ function App(props) {
   );
   return (
     <BrowserRouter>
-      <CssBaseline />
-      <HideOnScroll {...props}>
-        <AppBar>
-          <Toolbar variant="dense">
-            <IconButton
-              edge="start"
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="open drawer"
-            >
-              <MenuIcon />
-            </IconButton>
+      <SnackbarProvider maxSnack={3}>
+        <CssBaseline />
+        <HideOnScroll {...props}>
+          <AppBar>
+            <Toolbar variant="dense">
+              <IconButton
+                edge="start"
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="open drawer"
+              >
+                <MenuIcon />
+              </IconButton>
 
-            <Typography className={classes.title} variant="h6" noWrap>
-              <Link to="/" className={classes.brand}>
-                Fashion
-              </Link>
-            </Typography>
+              <Typography className={classes.title} variant="h6" noWrap>
+                <Link to="/" className={classes.brand}>
+                  Fashion
+                </Link>
+              </Typography>
 
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  placeholder="Search…"
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                  inputProps={{ "aria-label": "search" }}
+                />
               </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ "aria-label": "search" }}
-              />
-            </div>
-            <div className={classes.grow} />
-            <div className={classes.sectionDesktop}>
-              <Link to="/cart" className={classes.brand}>
-                <IconButton aria-label="show 4 new mails" color="inherit">
-                  <Badge badgeContent={cartItems.length} color="secondary">
-                    <ShoppingCartSharp />
-                  </Badge>
-                </IconButton>
-              </Link>
-              {userInfo ? (
+              <div className={classes.grow} />
+              <div className={classes.sectionDesktop}>
+                <Link to="/cart" className={classes.brand}>
+                  <IconButton aria-label="show 4 new mails" color="inherit">
+                    <Badge badgeContent={cartItems.length} color="secondary">
+                      <ShoppingCartSharp />
+                    </Badge>
+                  </IconButton>
+                </Link>
+                {userInfo ? (
+                  <IconButton
+                    edge="end"
+                    aria-label="account of current user"
+                    aria-controls={menuId}
+                    aria-haspopup="true"
+                    onClick={handleProfileMenuOpen}
+                    color="inherit"
+                  >
+                    <AccountCircle />
+                  </IconButton>
+                ) : (
+                  <Button color="inherit">
+                    <Link className={classes.brand} to="/signin">
+                      Sign In
+                    </Link>
+                  </Button>
+                )}
+              </div>
+              <div className={classes.sectionMobile}>
                 <IconButton
-                  edge="end"
-                  aria-label="account of current user"
-                  aria-controls={menuId}
+                  aria-label="show more"
+                  aria-controls={mobileMenuId}
                   aria-haspopup="true"
-                  onClick={handleProfileMenuOpen}
+                  onClick={handleMobileMenuOpen}
                   color="inherit"
                 >
-                  <AccountCircle />
+                  <MoreIcon />
                 </IconButton>
-              ) : (
-                <Button color="inherit">
-                  <Link className={classes.brand} to="/signin">
-                    Sign In
-                  </Link>
-                </Button>
-              )}
-            </div>
-            <div className={classes.sectionMobile}>
-              <IconButton
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
-            </div>
-          </Toolbar>
-          {renderMobileMenu}
-          {renderMenu}
-        </AppBar>
-      </HideOnScroll>
-      <Toolbar id="back-to-top-anchor" />
-      <Container>
-        <Route path="/cart/:id?" component={CartScreen}></Route>
-        <Route path="/product/:id" component={ProductScreen} exact></Route>
-        <Route
-          path="/product/:id/edit"
-          component={ProductEditScreen}
-          exact
-        ></Route>
-        <Route path="/signin" component={SigninScreen}></Route>
-        <Route path="/register" component={RegisterScreen}></Route>
-        <Route path="/shipping" component={ShippingAddressScreen}></Route>
-        <Route path="/payment" component={PaymentMethodScreen}></Route>
-        <Route path="/placeorder" component={PlaceOrderScreen}></Route>
-        <Route path="/order/:id" component={OrderScreen}></Route>
-        <Route path="/orderhistory" component={OrderHistoryScreen}></Route>
-        <PrivateRoute path="/profile" component={ProfileScreen}></PrivateRoute>
-        <AdminRoute
-          path="/productlist"
-          component={ProductListScreen}
-        ></AdminRoute>
-        <AdminRoute path="/orderlist" component={OrderListScreen}></AdminRoute>
-        <Route path="/" component={HomeScreen} exact></Route>
-      </Container>
-      <ScrollTop {...props}>
-        <Fab color="secondary" size="small" aria-label="scroll back to top">
-          <KeyboardArrowUpIcon />
-        </Fab>
-      </ScrollTop>
-      <footer className={classes.footer}>
-        <Container maxWidth="xs">
-          <Typography variant="overline">
-            Copyright &copy; by Thang Nguyen
-          </Typography>
+              </div>
+            </Toolbar>
+            {renderMobileMenu}
+            {renderMenu}
+          </AppBar>
+        </HideOnScroll>
+        <Toolbar id="back-to-top-anchor" />
+        <Container
+          style={{
+            minHeight: "80vh",
+          }}
+        >
+          <Route path="/cart/:id?" component={CartScreen}></Route>
+          <Route path="/product/:id" component={ProductScreen} exact></Route>
+          <Route
+            path="/product/:id/edit"
+            component={ProductEditScreen}
+            exact
+          ></Route>
+          <Route path="/signin" component={SigninScreen}></Route>
+          <Route path="/register" component={RegisterScreen}></Route>
+          <Route path="/shipping" component={ShippingAddressScreen}></Route>
+          <Route path="/payment" component={PaymentMethodScreen}></Route>
+          <Route path="/placeorder" component={PlaceOrderScreen}></Route>
+          <Route path="/order/:id" component={OrderScreen}></Route>
+          <Route path="/orderhistory" component={OrderHistoryScreen}></Route>
+          <PrivateRoute
+            path="/profile"
+            component={ProfileScreen}
+          ></PrivateRoute>
+          <AdminRoute
+            path="/productlist"
+            component={ProductListScreen}
+          ></AdminRoute>
+          <AdminRoute
+            path="/orderlist"
+            component={OrderListScreen}
+          ></AdminRoute>
+          <Route path="/" component={HomeScreen} exact></Route>
         </Container>
-      </footer>
+        <ScrollTop {...props}>
+          <Fab color="secondary" size="small" aria-label="scroll back to top">
+            <KeyboardArrowUpIcon />
+          </Fab>
+        </ScrollTop>
+        <footer className={classes.footer}>
+          <Container maxWidth="xs">
+            <Typography variant="overline">
+              Copyright &copy; by Thang Nguyen
+            </Typography>
+          </Container>
+        </footer>
+      </SnackbarProvider>
     </BrowserRouter>
   );
 }
 
 function HideOnScroll(props) {
   const { children, window } = props;
-  const classes = useStyles();
 
   // Note that you normally won't need to set the window ref as useScrollTrigger
   // will default to window.

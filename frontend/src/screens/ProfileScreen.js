@@ -1,113 +1,152 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { detailsUser, updateUserProfile } from '../actions/userActions'
-import LoadingBox from '../components/LoadingBox'
-import MessageBox from '../components/MessageBox'
-import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  TextField,
+  Container,
+  makeStyles,
+  Button,
+  CircularProgress,
+  Snackbar,
+  LinearProgress,
+} from "@material-ui/core";
+import { useSnackbar } from "notistack";
+import { Alert } from "@material-ui/lab";
+import { detailsUser, updateUserProfile } from "../actions/userActions";
+import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 
 export default function ProfileScreen() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const { enqueueSnackbar } = useSnackbar();
+  const classes = useStyles();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const userSignin = useSelector((state) => state.userSignin)
-  const { userInfo } = userSignin
-  const userDetails = useSelector((state) => state.userDetails)
-  const { loading, error, user } = userDetails
-  const userUpdateProfile = useSelector((state) => state.userUpdateProfile)
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
+  const userDetails = useSelector((state) => state.userDetails);
+  const { loading, error, user } = userDetails;
+  const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
   const {
     success: successUpdate,
     error: errorUpdate,
     loading: loadingUpdate,
-  } = userUpdateProfile
-  const dispatch = useDispatch()
+  } = userUpdateProfile;
+  const dispatch = useDispatch();
   useEffect(() => {
     if (!user) {
-      dispatch({ type: USER_UPDATE_PROFILE_RESET })
-      dispatch(detailsUser(userInfo._id))
+      dispatch({ type: USER_UPDATE_PROFILE_RESET });
+      dispatch(detailsUser(userInfo._id));
     } else {
-      setName(user.name)
-      setEmail(user.email)
+      setName(user.name);
+      setEmail(user.email);
     }
-  }, [dispatch, userInfo._id, user])
+    if (errorUpdate) {
+      enqueueSnackbar(errorUpdate, { variant: "error" });
+    } else if (successUpdate) {
+      enqueueSnackbar("Profile Updated Successfully", { variant: "success" });
+    }
+  }, [
+    dispatch,
+    userInfo._id,
+    user,
+    enqueueSnackbar,
+    errorUpdate,
+    successUpdate,
+  ]);
   const submitHandler = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     // dispatch update profile
     if (password !== confirmPassword) {
-      alert('Password and Confirm Password Are Not Matched')
+      enqueueSnackbar("Password and Confirm Password Are Not Matched", {
+        variant: "error",
+      });
     } else {
-      dispatch(updateUserProfile({ userId: user._id, name, email, password }))
+      dispatch(updateUserProfile({ userId: user._id, name, email, password }));
     }
-  }
+  };
+
   return (
-    <div>
-      <form className='form' onSubmit={submitHandler}>
+    <Container maxWidth="xs">
+      <form className={classes.form} onSubmit={submitHandler}>
         <div>
           <h1>User Profile</h1>
         </div>
         {loading ? (
-          <LoadingBox></LoadingBox>
-        ) : error ? (
-          <MessageBox variant='danger'>{error}</MessageBox>
+          <CircularProgress />
         ) : (
           <>
-            {loadingUpdate && <LoadingBox></LoadingBox>}
-            {errorUpdate && (
-              <MessageBox variant='danger'>{errorUpdate}</MessageBox>
-            )}
-            {successUpdate && (
-              <MessageBox variant='success'>
-                Profile Updated Successfully
-              </MessageBox>
-            )}
-            <div>
-              <label htmlFor='name'>Name</label>
-              <input
-                id='name'
-                type='text'
-                placeholder='Enter name'
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor='email'>Email</label>
-              <input
-                id='email'
-                type='email'
-                placeholder='Enter email'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor='password'>Password</label>
-              <input
-                id='password'
-                type='password'
-                placeholder='Enter password'
-                onChange={(e) => setPassword(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor='confirmPassword'>confirm Password</label>
-              <input
-                id='confirmPassword'
-                type='password'
-                placeholder='Enter confirm password'
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label />
-              <button className='primary' type='submit'>
-                Update
-              </button>
-            </div>
+            <TextField
+              variant="outlined"
+              label="Name"
+              margin="normal"
+              required
+              fullWidth
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              variant="outlined"
+              label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              variant="outlined"
+              label="Password"
+              fullWidth
+              id="password"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+            ></TextField>
+            <TextField
+              label="Confirm Password"
+              margin="normal"
+              variant="outlined"
+              fullWidth
+              id="confirmPassword"
+              type="password"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            ></TextField>
+            {loadingUpdate && <LinearProgress variant="determinate" />}
+            <Button
+              className={classes.submit}
+              color="primary"
+              fullWidth
+              variant="contained"
+              type="submit"
+              // onClick={}
+              disabled={loadingUpdate ? true : false}
+            >
+              Update
+            </Button>
           </>
         )}
       </form>
-    </div>
-  )
+    </Container>
+  );
 }
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
