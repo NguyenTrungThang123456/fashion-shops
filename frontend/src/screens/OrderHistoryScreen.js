@@ -32,7 +32,7 @@ export default function OrderHistoryScreen(props) {
         <Table className="table">
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>NO.</TableCell>
               <TableCell>DATE</TableCell>
               <TableCell>TOTAL ($)</TableCell>
               <TableCell>PAID</TableCell>
@@ -43,7 +43,7 @@ export default function OrderHistoryScreen(props) {
           <TableBody>
             {orders.map((order) => (
               <TableRow key={order._id}>
-                <TableCell>{order.shippingAddress.fullName}</TableCell>
+                <TableCell>{orders.indexOf(order)}</TableCell>
                 <TableCell>{order.createdAt.substring(0, 10)}</TableCell>
                 <TableCell>{order.totalPrice.toFixed(2)}</TableCell>
                 <TableCell>

@@ -1,117 +1,144 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  Button,
+  CircularProgress,
+  Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
+import { useSnackbar } from "notistack";
 import {
   createProduct,
   deleteProduct,
   listProducts,
-} from '../actions/productActions'
-import LoadingBox from '../components/LoadingBox'
-import MessageBox from '../components/MessageBox'
+} from "../actions/productActions";
+import LoadingBox from "../components/LoadingBox";
+import MessageBox from "../components/MessageBox";
 import {
   PRODUCT_CREATE_RESET,
   PRODUCT_DELETE_RESET,
-} from '../constants/productConstants'
+} from "../constants/productConstants";
 
 export default function ProductListScreen(props) {
-  const productList = useSelector((state) => state.productList)
-  const { loading, error, products } = productList
+  const productList = useSelector((state) => state.productList);
+  const { loading, error, products } = productList;
+  const { enqueueSnackbar } = useSnackbar();
 
-  const productCreate = useSelector((state) => state.productCreate)
+  const productCreate = useSelector((state) => state.productCreate);
   const {
     loading: loadingCreate,
     error: errorCreate,
     success: successCreate,
     product: createdProduct,
-  } = productCreate
+  } = productCreate;
 
-  const productDelete = useSelector((state) => state.productDelete)
+  const productDelete = useSelector((state) => state.productDelete);
   const {
     loading: loadingDelete,
     error: errorDelete,
     success: successDelete,
-  } = productDelete
+  } = productDelete;
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
     if (successCreate) {
-      dispatch({ type: PRODUCT_CREATE_RESET })
-      props.history.push(`/product/${createdProduct._id}/edit`)
+      dispatch({ type: PRODUCT_CREATE_RESET });
+      props.history.push(`/product/${createdProduct._id}/edit`);
     }
     if (successDelete) {
-      dispatch({ type: PRODUCT_DELETE_RESET })
+      dispatch({ type: PRODUCT_DELETE_RESET });
     }
-    dispatch(listProducts())
-  }, [createdProduct, dispatch, props.history, successCreate, successDelete])
+    dispatch(listProducts());
+  }, [createdProduct, dispatch, props.history, successCreate, successDelete]);
 
   const deleteHandler = (product) => {
-    if (window.confirm('Are you sure to delete?')) {
-      dispatch(deleteProduct(product._id))
+    if (window.confirm("Are you sure to delete?")) {
+      dispatch(deleteProduct(product._id));
     }
-  }
+  };
   const createHandler = () => {
-    dispatch(createProduct())
-  }
+    dispatch(createProduct());
+  };
   return (
-    <div>
-      <div className='row'>
+    <Container>
+      <div className="row">
         <h1>Products</h1>
-        <button type='button' className='primary' onClick={createHandler}>
+        <Button
+          variant="contained"
+          type="button"
+          color="primary"
+          className="primary"
+          onClick={createHandler}
+        >
           Create Product
-        </button>
+        </Button>
       </div>
 
       {loadingDelete && <LoadingBox></LoadingBox>}
-      {errorDelete && <MessageBox variant='danger'>{errorDelete}</MessageBox>}
+      {errorDelete && <MessageBox variant="danger">{errorDelete}</MessageBox>}
 
       {loadingCreate && <LoadingBox></LoadingBox>}
-      {errorCreate && <MessageBox variant='danger'>{errorCreate}</MessageBox>}
+      {errorCreate && <MessageBox variant="danger">{errorCreate}</MessageBox>}
       {loading ? (
-        <LoadingBox></LoadingBox>
+        <CircularProgress />
       ) : error ? (
-        <MessageBox variant='danger'>{error}</MessageBox>
+        enqueueSnackbar(error, { variant: "error" })
       ) : (
-        <table className='table'>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>NAME</th>
-              <th>PRICE</th>
-              <th>CATEGORY</th>
-              <th>BRAND</th>
-              <th>ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table className="table">
+          <TableHead>
+            <TableRow>
+              <TableCell>NO.</TableCell>
+              <TableCell>NAME</TableCell>
+              <TableCell>PRICE</TableCell>
+              <TableCell>CATEGORY</TableCell>
+              <TableCell>BRAND</TableCell>
+              <TableCell>ACTIONS</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {products.map((product) => (
-              <tr key={product._id}>
-                <td>{product._id}</td>
-                <td>{product.name}</td>
-                <td>{product.price}</td>
-                <td>{product.category}</td>
-                <td>{product.brand}</td>
-                <td>
-                  <button
-                    type='button'
-                    className='small'
+              <TableRow key={product._id}>
+                <TableCell>{products.indexOf(product)}</TableCell>
+                <TableCell>{product.name}</TableCell>
+                <TableCell>{product.price}</TableCell>
+                <TableCell>{product.category}</TableCell>
+                <TableCell>{product.brand}</TableCell>
+                <TableCell
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="inherit"
+                    type="button"
+                    className="small"
                     onClick={() =>
                       props.history.push(`/product/${product._id}/edit`)
                     }
                   >
                     Edit
-                  </button>
-                  <button
-                    type='button'
-                    className='small'
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    type="button"
+                    className="small"
                     onClick={() => deleteHandler(product)}
                   >
                     Delete
-                  </button>
-                </td>
-              </tr>
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       )}
-    </div>
-  )
+    </Container>
+  );
 }

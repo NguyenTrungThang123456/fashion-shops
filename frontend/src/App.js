@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Link, Route } from "react-router-dom";
 import {
@@ -52,6 +52,7 @@ import OrderListScreen from "./screens/OrderListScreen";
 import { SnackbarProvider } from "notistack";
 
 function App(props) {
+  const [params, setParams] = useState();
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
   const userSignin = useSelector((state) => state.userSignin);
@@ -98,7 +99,7 @@ function App(props) {
       <MenuItem onClick={handleMenuClose}>
         <Link to="/profile"> Profile</Link>
       </MenuItem>
-      {userInfo?.isAdmin && <MenuItem>Dashboard</MenuItem>}
+
       <MenuItem onClick={handleMenuClose}>
         <Link to="/orderhistory">Order History</Link>
       </MenuItem>
@@ -110,6 +111,16 @@ function App(props) {
       >
         <Link to="#signout">Signout</Link>
       </MenuItem>
+      {userInfo?.isAdmin && (
+        <div>
+          <MenuItem>
+            <Link to="/productlist">Products</Link>
+          </MenuItem>
+          <MenuItem>
+            <Link to="/orderlist">Orders</Link>
+          </MenuItem>
+        </div>
+      )}
     </Menu>
   );
 
@@ -285,10 +296,6 @@ function App(props) {
 
 function HideOnScroll(props) {
   const { children, window } = props;
-
-  // Note that you normally won't need to set the window ref as useScrollTrigger
-  // will default to window.
-  // This is only being set here because the demo is in an iframe.
   const trigger = useScrollTrigger({ target: window ? window() : undefined });
 
   return (
@@ -299,18 +306,11 @@ function HideOnScroll(props) {
 }
 HideOnScroll.propTypes = {
   children: PropTypes.element.isRequired,
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
   window: PropTypes.func,
 };
 function ScrollTop(props) {
   const { children, window } = props;
   const classes = useStyles();
-  // Note that you normally won't need to set the window ref as useScrollTrigger
-  // will default to window.
-  // This is only being set here because the demo is in an iframe.
   const trigger = useScrollTrigger({
     target: window ? window() : undefined,
     disableHysteresis: true,
@@ -342,10 +342,6 @@ function ScrollTop(props) {
 
 ScrollTop.propTypes = {
   children: PropTypes.element.isRequired,
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
   window: PropTypes.func,
 };
 
@@ -391,7 +387,6 @@ const useStyles = makeStyles((theme) => ({
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
     width: "100%",
