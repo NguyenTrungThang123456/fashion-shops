@@ -28,7 +28,7 @@ export default function HomeScreen() {
   ) : (
     <Grid container spacing={2} justify="center" alignItems="center">
       {products.map((product) => (
-        <Grid item>
+        <Grid item key={product._id}>
           <Product key={product._id} product={product}></Product>
         </Grid>
       ))}

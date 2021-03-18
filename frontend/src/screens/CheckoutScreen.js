@@ -1,21 +1,73 @@
-import {
-  AppBar,
-  Button,
-  CssBaseline,
-  makeStyles,
-  Paper,
-  Step,
-  StepLabel,
-  Stepper,
-  Toolbar,
-  Typography,
-} from "@material-ui/core";
 import React from "react";
-import PaymentMethodScreen from "../screens/PaymentMethodScreen";
-import PlaceOrderScreen from "../screens/PlaceOrderScreen";
-import ShippingAddressScreen from "../screens/ShippingAddressScreen";
+import {
+  makeStyles,
+  Typography,
+  Paper,
+  Link,
+  Button,
+  Stepper,
+  StepLabel,
+  Step,
+  CssBaseline,
+} from "@material-ui/core";
+import AddressForm from "./AddressForm";
+import PaymentForm from "./PaymentMethod";
+import Review from "./ReviewOrder";
+import { useEffect } from "react";
 
-export default function CheckoutSteps(props) {
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    position: "relative",
+  },
+  layout: {
+    width: "auto",
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
+      width: 600,
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+  },
+  paper: {
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+    padding: theme.spacing(2),
+    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+      marginTop: theme.spacing(6),
+      marginBottom: theme.spacing(6),
+      padding: theme.spacing(3),
+    },
+  },
+  stepper: {
+    padding: theme.spacing(3, 0, 5),
+  },
+  buttons: {
+    display: "flex",
+    justifyContent: "flex-end",
+  },
+  button: {
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
+  },
+}));
+
+const steps = ["Shipping address", "Payment details", "Review your order"];
+
+function getStepContent(step) {
+  switch (step) {
+    case 0:
+      return <AddressForm />;
+    case 1:
+      return <PaymentForm />;
+    case 2:
+      return <Review />;
+    default:
+      throw new Error("Unknown step");
+  }
+}
+
+export default function Checkout() {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -26,22 +78,11 @@ export default function CheckoutSteps(props) {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+
   return (
-    // <div className='row checkout-steps'>
-    //   <div className={props.step1 ? 'active' : ''}>Sign-In</div>
-    //   <div className={props.step2 ? 'active' : ''}>Shipping</div>
-    //   <div className={props.step3 ? 'active' : ''}>Payment</div>
-    //   <div className={props.step4 ? 'active' : ''}>Place Order</div>
-    // </div>
     <React.Fragment>
       <CssBaseline />
-      <AppBar position="absolute" color="default" className={classes.appBar}>
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Company name
-          </Typography>
-        </Toolbar>
-      </AppBar>
+
       <main className={classes.layout}>
         <Paper className={classes.paper}>
           <Typography component="h1" variant="h4" align="center">
@@ -91,56 +132,4 @@ export default function CheckoutSteps(props) {
       </main>
     </React.Fragment>
   );
-}
-
-const useStyles = makeStyles((theme) => ({
-  appBar: {
-    position: "relative",
-  },
-  layout: {
-    width: "auto",
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-      width: 600,
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
-  },
-  paper: {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    padding: theme.spacing(2),
-    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      padding: theme.spacing(3),
-    },
-  },
-  stepper: {
-    padding: theme.spacing(3, 0, 5),
-  },
-  buttons: {
-    display: "flex",
-    justifyContent: "flex-end",
-  },
-  button: {
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-  },
-}));
-
-const steps = ["Shipping address", "Payment details", "Review your order"];
-
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <ShippingAddressScreen />;
-    case 1:
-      return <PaymentMethodScreen />;
-    case 2:
-      return <PlaceOrderScreen />;
-    default:
-      throw new Error("Unknown step");
-  }
 }

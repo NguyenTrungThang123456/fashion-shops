@@ -6,9 +6,6 @@ import {
   CardContent,
   makeStyles,
   Typography,
-  CardActions,
-  Button,
-  fade,
 } from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
 
@@ -16,30 +13,6 @@ export default function Product(props) {
   const { product } = props;
   const classes = useStyles();
   return (
-    // <Card key={product._id} className="card">
-    //   {/* <Link to={`/product/${product._id}`}>
-    //     <img className="medium" src={product.image} alt={product.name} />
-    //   </Link>
-    //   <div className="card-body">
-    //     <Link to={`/product/${product._id}`}>
-    //       <h2>{product.name}</h2>
-    //     </Link>
-    //     <Rating
-    //       rating={product.rating}
-    //       numReviews={product.numReviews}
-    //     ></Rating>
-    //     <div className="price">${product.price}</div>
-    //   </div> */}
-    //   <CardMedia
-    //     style={{
-    //       width: "100%",
-    //     }}
-    //     image={product.image}
-    //   ></CardMedia>
-    //   <CardContent>
-    //     <Link to={`/product/${product._id}`}>{product.name}</Link>
-    //   </CardContent>
-    // </Card>
     <Card className={classes.root} variant="outlined">
       <Link to={`/product/${product._id}`}>
         <CardMedia className={classes.media} image={product.image} />

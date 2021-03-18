@@ -116,16 +116,13 @@ export default function ProfileScreen() {
               type="password"
               onChange={(e) => setConfirmPassword(e.target.value)}
             ></TextField>
-            {loadingUpdate && (
-              <LinearProgress variant="determinate" value={loadingUpdate} />
-            )}
+            {loadingUpdate && <LinearProgress />}
             <Button
               className={classes.submit}
               color="primary"
               fullWidth
               variant="contained"
               type="submit"
-              // onClick={}
               disabled={loadingUpdate ? true : false}
             >
               Update

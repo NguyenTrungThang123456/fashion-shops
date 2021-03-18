@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { register } from "../actions/userActions";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
 import {
   Avatar,
   Checkbox,
@@ -15,10 +12,15 @@ import {
   Typography,
   CssBaseline,
   Button,
+  LinearProgress,
 } from "@material-ui/core";
+import { useSnackbar } from "notistack";
 import { LockOutlined as LockOutlinedIcon } from "@material-ui/icons";
+import { register } from "../actions/userActions";
+
 export default function RegisterScreen(props) {
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,79 +37,22 @@ export default function RegisterScreen(props) {
   const submitHandler = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Password and confirm password are not match");
+      enqueueSnackbar("Password and confirm password are not match", {
+        variant: "error",
+      });
     } else {
       dispatch(register(name, email, password));
     }
   };
   useEffect(() => {
+    if (error) {
+      enqueueSnackbar(error, { variant: "error" });
+    }
     if (userInfo) {
       props.history.push(redirect);
     }
-  }, [props.history, redirect, userInfo]);
+  }, [props.history, redirect, userInfo, error, enqueueSnackbar]);
   return (
-    // <div>
-    //   <form className='form' onSubmit={submitHandler}>
-    //     <div>
-    //       <h1>Create Account</h1>
-    //     </div>
-    //     {loading && <LoadingBox></LoadingBox>}
-    //     {error && <MessageBox variant='danger'>{error}</MessageBox>}
-    //     <div>
-    //       <label htmlFor='name'>Name</label>
-    //       <input
-    //         type='text'
-    //         id='name'
-    //         placeholder='Enter name'
-    //         required
-    //         onChange={(e) => setName(e.target.value)}
-    //       ></input>
-    //     </div>
-    //     <div>
-    //       <label htmlFor='email'>Email address</label>
-    //       <input
-    //         type='email'
-    //         id='email'
-    //         placeholder='Enter email'
-    //         required
-    //         onChange={(e) => setEmail(e.target.value)}
-    //       ></input>
-    //     </div>
-    //     <div>
-    //       <label htmlFor='password'>Password</label>
-    //       <input
-    //         type='password'
-    //         id='password'
-    //         placeholder='Enter password'
-    //         required
-    //         onChange={(e) => setPassword(e.target.value)}
-    //       ></input>
-    //     </div>
-    //     <div>
-    //       <label htmlFor='confirmPassword'>Confirm Password</label>
-    //       <input
-    //         type='password'
-    //         id='confirmPassword'
-    //         placeholder='Enter confirm password'
-    //         required
-    //         onChange={(e) => setConfirmPassword(e.target.value)}
-    //       ></input>
-    //     </div>
-    //     <div>
-    //       <label />
-    //       <button className='primary' type='submit'>
-    //         Register
-    //       </button>
-    //     </div>
-    //     <div>
-    //       <label />
-    //       <div>
-    //         Already have an account?{' '}
-    //         <Link to={`/signin?redirect=${redirect}`}>Sign-In</Link>
-    //       </div>
-    //     </div>
-    //   </form>
-    // </div>
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
@@ -176,12 +121,14 @@ export default function RegisterScreen(props) {
               />
             </Grid>
           </Grid>
+          {loading && <LinearProgress />}
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={loading ? true : false}
           >
             Sign Up
           </Button>

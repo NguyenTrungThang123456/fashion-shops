@@ -6,20 +6,21 @@ import {
   CssBaseline,
   FormControlLabel,
   Grid,
+  LinearProgress,
   makeStyles,
   TextField,
   Typography,
 } from "@material-ui/core";
+import { useSnackbar } from "notistack";
 import { LockOutlined as LockOutlinedIcon } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { signin } from "../actions/userActions";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
 
 export default function SigninScreen(props) {
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -36,10 +37,14 @@ export default function SigninScreen(props) {
     dispatch(signin(email, password));
   };
   useEffect(() => {
+    if (error) {
+      enqueueSnackbar(error, { variant: "error" });
+    }
     if (userInfo) {
       props.history.push(redirect);
     }
-  }, [props.history, redirect, userInfo]);
+  }, [props.history, redirect, userInfo, error, enqueueSnackbar]);
+
   return (
     <Container maxWidth="xs">
       <CssBaseline />
@@ -79,6 +84,8 @@ export default function SigninScreen(props) {
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
+          {loading && <LinearProgress />}
+
           <Button
             type="submit"
             fullWidth

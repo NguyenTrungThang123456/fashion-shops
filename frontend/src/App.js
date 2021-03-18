@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Link, Route } from "react-router-dom";
 import {
@@ -30,7 +30,6 @@ import {
   MoreVert as MoreIcon,
   ShoppingCartSharp,
   KeyboardArrowUp as KeyboardArrowUpIcon,
-  Label,
 } from "@material-ui/icons";
 import { signout } from "./actions/userActions";
 import AdminRoute from "./components/AdminRoute";
@@ -39,20 +38,17 @@ import CartScreen from "./screens/CartScreen";
 import HomeScreen from "./screens/HomeScreen";
 import OrderHistoryScreen from "./screens/OrderHistoryScreen";
 import OrderScreen from "./screens/OrderScreen";
-import PaymentMethodScreen from "./screens/PaymentMethodScreen";
-import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 import ProductListScreen from "./screens/ProductListScreen";
 import ProductScreen from "./screens/ProductScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import RegisterScreen from "./screens/RegisterScreen";
-import ShippingAddressScreen from "./screens/ShippingAddressScreen";
 import SigninScreen from "./screens/SigninScreen";
 import ProductEditScreen from "./screens/ProductEditScreen";
 import OrderListScreen from "./screens/OrderListScreen";
 import { SnackbarProvider } from "notistack";
+import Checkout from "./screens/CheckoutScreen";
 
 function App(props) {
-  const [params, setParams] = useState();
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
   const userSignin = useSelector((state) => state.userSignin);
@@ -258,9 +254,7 @@ function App(props) {
           ></Route>
           <Route path="/signin" component={SigninScreen}></Route>
           <Route path="/register" component={RegisterScreen}></Route>
-          <Route path="/shipping" component={ShippingAddressScreen}></Route>
-          <Route path="/payment" component={PaymentMethodScreen}></Route>
-          <Route path="/placeorder" component={PlaceOrderScreen}></Route>
+          <Route path="/checkout" component={Checkout}></Route>
           <Route path="/order/:id" component={OrderScreen}></Route>
           <Route path="/orderhistory" component={OrderHistoryScreen}></Route>
           <PrivateRoute
@@ -283,11 +277,9 @@ function App(props) {
           </Fab>
         </ScrollTop>
         <footer className={classes.footer}>
-          <Container maxWidth="xs">
-            <Typography variant="overline">
-              Copyright &copy; by Thang Nguyen
-            </Typography>
-          </Container>
+          <Typography variant="overline">
+            &copy; 2021 <b>Thang Nguyen</b>. All rights reserved.
+          </Typography>
         </footer>
       </SnackbarProvider>
     </BrowserRouter>
@@ -414,6 +406,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2, 1),
     marginTop: "auto",
     justifyContent: "center",
+    textAlign: "center",
     backgroundColor:
       theme.palette.type === "light"
         ? theme.palette.grey[200]

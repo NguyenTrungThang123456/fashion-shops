@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { addToCart, removeFromCart } from "../actions/cartActions";
-import MessageBox from "../components/MessageBox";
 import {
   Paper,
   Table,
@@ -15,14 +13,12 @@ import {
   Button,
   Container,
   Grid,
+  Typography,
 } from "@material-ui/core";
 import { Delete as DeleteIcon } from "@material-ui/icons";
+import { Link } from "react-router-dom";
 function ccyFormat(num) {
   return `${num.toFixed(2)}`;
-}
-
-function priceRow(qty, unit) {
-  return qty * unit;
 }
 export default function CartScreen(props) {
   const classes = useStyles();
@@ -45,7 +41,7 @@ export default function CartScreen(props) {
   };
 
   const checkoutHandler = () => {
-    props.history.push("/signin?redirect=shipping");
+    props.history.push("/signin?redirect=checkout");
   };
   return (
     <Container>
@@ -71,10 +67,14 @@ export default function CartScreen(props) {
               <TableBody>
                 {cartItems.map((item) => (
                   <TableRow key={item.id}>
-                    <TableCell>{item.name}</TableCell>
+                    <TableCell>
+                      <Link to={`/product/${item.product}`}>{item.name}</Link>
+                    </TableCell>
                     <TableCell align="right">{item.qty}</TableCell>
-                    <TableCell align="right">{item.price}</TableCell>
-                    <TableCell align="right">{ccyFormat(item.price)}</TableCell>
+                    <TableCell align="right">${item.price}</TableCell>
+                    <TableCell align="right">
+                      ${ccyFormat(item.price)}
+                    </TableCell>
                     <TableCell align="right">
                       <Button
                         onClick={() => removeFromCartHandler(item.product)}
@@ -89,22 +89,14 @@ export default function CartScreen(props) {
                   <TableCell rowSpan={3} />
                   <TableCell colSpan={2}>Subtotal</TableCell>
                   <TableCell align="right">
-                    {ccyFormat(
-                      cartItems.reduce((a, c) => a + c.price * c.qty, 0)
-                    )}
+                    <b>
+                      $
+                      {ccyFormat(
+                        cartItems.reduce((a, c) => a + c.price * c.qty, 0)
+                      )}
+                    </b>
                   </TableCell>
                 </TableRow>
-                {/* <TableRow>
-            <TableCell>Tax</TableCell>
-            <TableCell align="right">{`${(TAX_RATE * 100).toFixed(
-              0
-            )} %`}</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={2}>Total</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
-          </TableRow> */}
               </TableBody>
             </Table>
           </TableContainer>
